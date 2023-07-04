@@ -1,3 +1,44 @@
-.forms {
-	margin-top: 20px;
+.item {
+	display: flex;
+}
+
+button {
+	background-color: rgb(211, 202, 188);
+	min-width: 60px;
+	max-height: 20px;
+	font-size: 7px;
+	margin-top: 8px;
+	margin-left: 6px;
+}
+
+p {
+	min-width: 10px;
+}
+.delete {
+	margin-left: 10px;
+}
+form {
+	display: flex;
+}
+body {
+	font-size: 11px;
+}
+.newDeal {
+	margin-top: 10px;
+}
+input {
+	height: 13px;
+	margin-top: 8px;
+	margin-left: 10px;
+	min-width: none;
+	max-width: 300px;
+}
+
+.update {
+	/* display: none; */
+	min-width: 1px;
+}
+
+label {
+	margin-top: 5px;
 }
