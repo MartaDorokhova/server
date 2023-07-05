@@ -17,17 +17,38 @@ export const App = () => {
 	const handleUpdateChange = (event) => {
 		setUpdateInput(event.target.value);
 	};
+
+	const searchDeal = (searchWord) => {
+		getToDo(`q=${searchWord}`);
+	};
+	const sortDeal = () => {
+		getToDo(`${`_sort=name&_order=asc`}`);
+	};
+
 	const refreshToDos = () => setRefreshToDosFlag(!refreshToDosFlag);
 
-	useEffect(() => {
-		setIsLoading(true);
+	// const getSortedTodos = (field) => {
+	// 	fetch(`http://localhost:3004/todos${field}`)
+	// 		.then((loadedData) => loadedData.json())
+	// 		.then((loadedToDos) => {
+	// 			setToDos(loadedToDos);
+	// 		})
+	// 		.finally(() => setIsLoading(false));
+	// };
 
-		fetch('http://localhost:3004/todos')
+	const getToDo = (query) => {
+		query ? (query = `?${query}`) : (query = '');
+		fetch(`http://localhost:3004/todos${query}`)
 			.then((loadedData) => loadedData.json())
 			.then((loadedToDos) => {
 				setToDos(loadedToDos);
 			})
 			.finally(() => setIsLoading(false));
+	};
+	useEffect(() => {
+		setIsLoading(true);
+		getToDo();
+		// getSortedTodos();
 	}, [refreshToDosFlag]);
 
 	const requestAddDeal = () => {
@@ -45,7 +66,6 @@ export const App = () => {
 			.finally(() => setIsCreating(false));
 	};
 	const requestChangeDeal = (id) => {
-		console.log(id);
 		setIsChanging({ what: true, id });
 	};
 	const requestUpdateDeal = (id) => {
@@ -78,15 +98,23 @@ export const App = () => {
 			})
 			.finally(() => setIsDeleting(false));
 	};
-	console.log(isChanging);
 	return (
 		<div className={styles.app}>
+			<div className={styles.search}>
+				<label>Найти задачу</label>
+				<input
+					type="text"
+					onChange={(event) => searchDeal(event.target.value)}
+				/>{' '}
+			</div>
+			<button onClick={sortDeal}>Сортировка(А-Я)</button>
+
 			{isLoading ? (
 				<div className="loader"></div>
 			) : (
 				toDos.map(({ id, name }) => (
 					<div key={id} className={styles.item}>
-						<p>{id}</p>
+						<p>-</p>
 						{isChanging.what && isChanging.id === id ? (
 							<div>
 								<input
@@ -104,15 +132,10 @@ export const App = () => {
 								</button>
 							</div>
 						) : (
-							<p>{name}</p>
+							<p className={styles.deal}>{name}</p>
 						)}
 
-						<button
-							// disabled={isChanging.what}
-							onClick={() => requestChangeDeal(id)}
-						>
-							Изменить дело
-						</button>
+						<button onClick={() => requestChangeDeal(id)}>Изменить дело</button>
 
 						<button
 							className={styles.delete}
@@ -125,12 +148,13 @@ export const App = () => {
 				))
 			)}
 			<form className={styles.newDeal}>
-				<label>Введите новую задачу</label>
-				<input type="text" onChange={handleInputChange} />
-
-				<button disabled={isCreating} onClick={requestAddDeal}>
-					Добавить дело
-				</button>
+				<div>
+					<label>Введите новую задачу</label>
+					<input type="text" onChange={handleInputChange} />
+					<button disabled={isCreating} onClick={requestAddDeal}>
+						Добавить дело
+					</button>
+				</div>
 			</form>
 		</div>
 	);

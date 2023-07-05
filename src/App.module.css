@@ -1,3 +1,6 @@
+.app {
+	margin-left: 15px;
+}
 .item {
 	display: flex;
 }
@@ -5,10 +8,12 @@
 button {
 	background-color: rgb(211, 202, 188);
 	min-width: 60px;
-	max-height: 20px;
+	max-height: 18px;
+	min-height: 15px;
 	font-size: 7px;
 	margin-top: 8px;
 	margin-left: 6px;
+	border: 0.5px solid #83610b;
 }
 
 p {
@@ -24,7 +29,8 @@ body {
 	font-size: 11px;
 }
 .newDeal {
-	margin-top: 10px;
+	margin-top: 8px;
+	display: block;
 }
 input {
 	height: 13px;
@@ -41,4 +47,8 @@ input {
 
 label {
 	margin-top: 5px;
+}
+
+.deal {
+	min-width: 150px;
 }
