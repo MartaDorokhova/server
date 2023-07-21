@@ -10,7 +10,7 @@ button {
 	min-width: 60px;
 	max-height: 18px;
 	min-height: 15px;
-	font-size: 7px;
+	font-size: 12px;
 	margin-top: 8px;
 	margin-left: 6px;
 	border: 0.5px solid #83610b;
@@ -26,7 +26,7 @@ form {
 	display: flex;
 }
 body {
-	font-size: 11px;
+	font-size: 14px;
 }
 .newDeal {
 	margin-top: 8px;
@@ -41,7 +41,6 @@ input {
 }
 
 .update {
-	/* display: none; */
 	min-width: 1px;
 }
 
