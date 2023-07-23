@@ -1,10 +1,12 @@
-import { TaskList } from './task-list';
+import { AddTask } from './add-task';
 import styles from './App.module.css';
+import { TasksList } from './tasks-list';
 
 export const App = () => {
 	return (
 		<div className={styles.app}>
-			<TaskList />
+			<TasksList />
+			<AddTask />
 		</div>
 	);
 };

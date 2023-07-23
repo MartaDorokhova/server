@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './App.module.css';
 
-export const Task = () => {
+export const TasksList = () => {
 	const [toDos, setToDos] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -11,8 +11,6 @@ export const Task = () => {
 
 	const handleUpdateChange = (event, id) => {
 		const toDo = toDos.filter((item) => item.id === id);
-		console.log(id);
-		console.log(toDo[0].name);
 		if (event.target.value) {
 			setUpdateInput(event.target.value);
 		} else {
@@ -80,7 +78,6 @@ export const Task = () => {
 			})
 			.finally(() => setIsDeleting(false));
 	};
-
 	return (
 		<div>
 			<div className={styles.search}>

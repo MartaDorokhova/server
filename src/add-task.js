@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Task } from './task';
 import styles from './App.module.css';
 
-export const TaskList = () => {
+export const AddTask = () => {
 	const [isCreating, setIsCreating] = useState(false);
 	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
 	const [addName, setAddName] = useState();
@@ -30,7 +29,6 @@ export const TaskList = () => {
 
 	return (
 		<div>
-			<Task />
 			<form className={styles.newDeal}>
 				<div>
 					<label>Введите новую задачу</label>
