@@ -4,15 +4,20 @@ import styles from './App.module.css';
 export const Task = () => {
 	const [toDos, setToDos] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isUpdating, setIsUpdating] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
-	const [isChanging, setIsChanging] = useState({ what: false, id: 0 });
+	const [isChanging, setIsChanging] = useState({ what: false, id: 'id' });
 	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
-
 	const [updateInput, setUpdateInput] = useState(false);
 
-	const handleUpdateChange = (event) => {
-		setUpdateInput(event.target.value);
+	const handleUpdateChange = (event, id) => {
+		const toDo = toDos.filter((item) => item.id === id);
+		console.log(id);
+		console.log(toDo[0].name);
+		if (event.target.value) {
+			setUpdateInput(event.target.value);
+		} else {
+			setUpdateInput(toDo[0].name);
+		}
 	};
 
 	const searchDeal = (searchWord) => {
@@ -43,21 +48,24 @@ export const Task = () => {
 		setIsChanging({ what: true, id });
 	};
 	const requestUpdateDeal = (id) => {
-		setIsUpdating(true);
-		setIsChanging({ what: false, id: id });
-		fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				name: updateInput,
-			}),
-		})
-			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				console.log('Дело обновлено:', response);
-				refreshToDos();
+		if (updateInput) {
+			fetch(`http://localhost:3004/todos/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json;charset=utf-8' },
+				body: JSON.stringify({
+					name: updateInput,
+				}),
 			})
-			.finally(() => setIsUpdating(false));
+				.then((rawResponse) => rawResponse.json())
+				.then((response) => {
+					console.log('Дело обновлено:', response);
+					refreshToDos();
+				})
+				.finally(() => {
+					setIsChanging({ what: false, id });
+				});
+		}
+		setIsChanging({ what: false, id });
 	};
 	const requestDeleteDeal = (id) => {
 		setIsDeleting(true);
@@ -96,15 +104,10 @@ export const Task = () => {
 									className={styles.update}
 									type="text"
 									name={name}
-									onChange={handleUpdateChange}
+									onChange={(event) => handleUpdateChange(event, id)}
 									defaultValue={name}
 								/>
-								<button
-									disabled={isUpdating}
-									onClick={() => requestUpdateDeal(id)}
-								>
-									ОК
-								</button>
+								<button onClick={() => requestUpdateDeal(id)}>ОК</button>
 							</div>
 						) : (
 							<p className={styles.deal}>{name}</p>
