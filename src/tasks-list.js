@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { AppContext } from './context';
 import styles from './App.module.css';
 
 export const TasksList = () => {
@@ -8,7 +9,7 @@ export const TasksList = () => {
 	const [isChanging, setIsChanging] = useState({ what: false, id: 'id' });
 	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
 	const [updateInput, setUpdateInput] = useState(false);
-
+	const { dispatch } = useContext(AppContext);
 	const handleUpdateChange = (event, id) => {
 		const toDo = toDos.filter((item) => item.id === id);
 		if (event.target.value) {
@@ -67,16 +68,8 @@ export const TasksList = () => {
 	};
 	const requestDeleteDeal = (id) => {
 		setIsDeleting(true);
-		fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-		})
-			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				console.log('Дело удалено:', response);
-				refreshToDos();
-			})
-			.finally(() => setIsDeleting(false));
+		dispatch({ type: 'DELETE TASK', payload: id });
+		setIsDeleting(false);
 	};
 	return (
 		<div>
@@ -96,7 +89,7 @@ export const TasksList = () => {
 					<div key={id} className={styles.item}>
 						<p>-</p>
 						{isChanging.what && isChanging.id === id ? (
-							<div>
+							<form>
 								<input
 									className={styles.update}
 									type="text"
@@ -105,7 +98,7 @@ export const TasksList = () => {
 									defaultValue={name}
 								/>
 								<button onClick={() => requestUpdateDeal(id)}>ОК</button>
-							</div>
+							</form>
 						) : (
 							<p className={styles.deal}>{name}</p>
 						)}
