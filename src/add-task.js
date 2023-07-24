@@ -1,30 +1,19 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AppContext } from './context';
 import styles from './App.module.css';
 
 export const AddTask = () => {
 	const [isCreating, setIsCreating] = useState(false);
-	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
-	const [addName, setAddName] = useState();
 
+	const [addName, setAddName] = useState();
+	const { dispatch } = useContext(AppContext);
 	const handleInputChange = (event) => {
 		setAddName(event.target.value);
 	};
 
-	const refreshToDos = () => setRefreshToDosFlag(!refreshToDosFlag);
-
 	const requestAddDeal = () => {
-		fetch('http://localhost:3004/todos', {
-			method: 'Post',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				name: addName,
-			}),
-		})
-			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				refreshToDos(response);
-			})
-			.finally(() => setIsCreating(false));
+		dispatch({ type: 'SET NEW TASK', payload: addName });
+		setIsCreating(false);
 	};
 
 	return (
