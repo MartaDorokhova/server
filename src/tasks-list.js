@@ -6,7 +6,7 @@ export const TasksList = () => {
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isChanging, setIsChanging] = useState({ what: false, id: 'id' });
 	const [updateInput, setUpdateInput] = useState();
-	const { dispatch, toDos, getToDo, isLoading } = useContext(AppContext);
+	const { dispatch, toDos, isLoading } = useContext(AppContext);
 
 	const handleUpdateChange = (event, id) => {
 		const toDo = toDos.filter((item) => item.id === id);
@@ -18,11 +18,11 @@ export const TasksList = () => {
 	};
 
 	const searchDeal = (searchWord) => {
-		getToDo(`q=${searchWord}`);
+		dispatch({ type: 'SEARCH TASK', payload: searchWord });
 	};
 
 	const sortDeal = () => {
-		getToDo({ _sort: 'name', _order: 'asc' });
+		dispatch({ type: 'SORT TASKS', payload: {} });
 	};
 
 	const requestChangeDeal = (id) => {

@@ -26,6 +26,14 @@ export const App = () => {
 	const dispatch = (action) => {
 		const { type, payload } = action;
 		switch (type) {
+			case 'SEARCH TASK':
+				getToDo(`q=${payload}`);
+
+				break;
+			case 'SORT TASKS':
+				getToDo({ _sort: 'name', _order: 'asc' });
+
+				break;
 			case 'SET NEW TASK':
 				fetch('http://localhost:3004/todos', {
 					method: 'Post',
@@ -53,7 +61,6 @@ export const App = () => {
 						console.log(response);
 						refreshToDos();
 					});
-				console.log(payload.name);
 				break;
 			case 'DELETE TASK':
 				fetch(`http://localhost:3004/todos/${payload}`, {
@@ -72,7 +79,7 @@ export const App = () => {
 		}
 	};
 	return (
-		<AppContext.Provider value={{ dispatch, toDos, isLoading, getToDo }}>
+		<AppContext.Provider value={{ dispatch, toDos, isLoading }}>
 			<div className={styles.app}>
 				<TasksList />
 				<AddTask />
