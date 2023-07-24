@@ -1,12 +1,28 @@
 import { AddTask } from './add-task';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppContext } from './context';
 import styles from './App.module.css';
 import { TasksList } from './tasks-list';
 
 export const App = () => {
+	const [toDos, setToDos] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
 	const refreshToDos = () => setRefreshToDosFlag(!refreshToDosFlag);
+	const getToDo = (query) => {
+		fetch(`http://localhost:3004/todos?${new URLSearchParams(query)}`)
+			.then((loadedData) => loadedData.json())
+			.then((loadedToDos) => {
+				setToDos(loadedToDos);
+			})
+			.finally(() => setIsLoading(false));
+	};
+
+	useEffect(() => {
+		setIsLoading(true);
+		getToDo();
+	}, [refreshToDosFlag]);
+
 	const dispatch = (action) => {
 		const { type, payload } = action;
 		switch (type) {
@@ -23,6 +39,21 @@ export const App = () => {
 						refreshToDos(response);
 					});
 
+				break;
+			case 'UPDATE TASK':
+				fetch(`http://localhost:3004/todos/${payload.id}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json;charset=utf-8' },
+					body: JSON.stringify({
+						name: payload.name,
+					}),
+				})
+					.then((rawResponse) => rawResponse.json())
+					.then((response) => {
+						console.log(response);
+						refreshToDos();
+					});
+				console.log(payload.name);
 				break;
 			case 'DELETE TASK':
 				fetch(`http://localhost:3004/todos/${payload}`, {
@@ -41,7 +72,7 @@ export const App = () => {
 		}
 	};
 	return (
-		<AppContext.Provider value={{ dispatch }}>
+		<AppContext.Provider value={{ dispatch, toDos, isLoading, getToDo }}>
 			<div className={styles.app}>
 				<TasksList />
 				<AddTask />

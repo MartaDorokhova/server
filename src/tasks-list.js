@@ -1,15 +1,13 @@
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { AppContext } from './context';
 import styles from './App.module.css';
 
 export const TasksList = () => {
-	const [toDos, setToDos] = useState([]);
-	const [isLoading, setIsLoading] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isChanging, setIsChanging] = useState({ what: false, id: 'id' });
-	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
-	const [updateInput, setUpdateInput] = useState(false);
-	const { dispatch } = useContext(AppContext);
+	const [updateInput, setUpdateInput] = useState();
+	const { dispatch, toDos, getToDo, isLoading } = useContext(AppContext);
+
 	const handleUpdateChange = (event, id) => {
 		const toDo = toDos.filter((item) => item.id === id);
 		if (event.target.value) {
@@ -27,42 +25,14 @@ export const TasksList = () => {
 		getToDo({ _sort: 'name', _order: 'asc' });
 	};
 
-	const refreshToDos = () => setRefreshToDosFlag(!refreshToDosFlag);
-
-	const getToDo = (query) => {
-		fetch(`http://localhost:3004/todos?${new URLSearchParams(query)}`)
-			.then((loadedData) => loadedData.json())
-			.then((loadedToDos) => {
-				setToDos(loadedToDos);
-			})
-			.finally(() => setIsLoading(false));
-	};
-
-	useEffect(() => {
-		setIsLoading(true);
-		getToDo();
-	}, [refreshToDosFlag]);
-
 	const requestChangeDeal = (id) => {
 		setIsChanging({ what: true, id });
+		setUpdateInput();
 	};
 	const requestUpdateDeal = (id) => {
 		if (updateInput) {
-			fetch(`http://localhost:3004/todos/${id}`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json;charset=utf-8' },
-				body: JSON.stringify({
-					name: updateInput,
-				}),
-			})
-				.then((rawResponse) => rawResponse.json())
-				.then((response) => {
-					console.log('Дело обновлено:', response);
-					refreshToDos();
-				})
-				.finally(() => {
-					setIsChanging({ what: false, id });
-				});
+			dispatch({ type: 'UPDATE TASK', payload: { name: updateInput, id: id } });
+			console.log('updateInput', updateInput);
 		}
 		setIsChanging({ what: false, id });
 	};
