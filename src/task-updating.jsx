@@ -4,7 +4,7 @@ import { AppContext } from './context';
 import styles from './App.module.css';
 import { TasksList } from './tasks-list';
 
-export const App = () => {
+export const TasksUpdating = () => {
 	const [toDos, setToDos] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [refreshToDosFlag, setRefreshToDosFlag] = useState();
