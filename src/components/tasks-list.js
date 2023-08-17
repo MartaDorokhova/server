@@ -1,12 +1,28 @@
-import { useState, useContext } from 'react';
-import { AppContext } from './context';
-import styles from './App.module.css';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getToDo } from '../actions/getToDo';
+import { deleteToDos } from '../actions/delete-task';
+import { changeTasks } from '../actions/change-task';
+import styles from '../App.module.css';
 
 export const TasksList = () => {
-	const [isDeleting, setIsDeleting] = useState(false);
 	const [isChanging, setIsChanging] = useState({ what: false, id: 'id' });
 	const [updateInput, setUpdateInput] = useState();
-	const { dispatch, toDos, isLoading } = useContext(AppContext);
+	const { toDos, isLoading } = useSelector((state) => state.toDos);
+	const dispatch = useDispatch();
+
+	const searchDeal = (str) => {
+		dispatch(getToDo(`q=${str}`));
+	};
+
+	const sortDeal = () => {
+		dispatch(getToDo({ _sort: 'name', _order: 'asc' }));
+	};
+
+	const requestDeleteDeal = (id) => {
+		dispatch(deleteToDos(id));
+		dispatch(getToDo());
+	};
 
 	const handleUpdateChange = (event, id) => {
 		const toDo = toDos.filter((item) => item.id === id);
@@ -17,38 +33,30 @@ export const TasksList = () => {
 		}
 	};
 
-	const searchDeal = (searchWord) => {
-		dispatch({ type: 'SEARCH TASK', payload: searchWord });
-	};
-
-	const sortDeal = () => {
-		dispatch({ type: 'SORT TASKS', payload: {} });
-	};
-
 	const requestChangeDeal = (id) => {
 		setIsChanging({ what: true, id });
 		setUpdateInput();
 	};
+
 	const requestUpdateDeal = (id) => {
-		if (updateInput) {
-			dispatch({ type: 'UPDATE TASK', payload: { name: updateInput, id: id } });
-			console.log('updateInput', updateInput);
-		}
+		dispatch(changeTasks(updateInput, id));
+		dispatch(getToDo());
 		setIsChanging({ what: false, id });
 	};
-	const requestDeleteDeal = (id) => {
-		setIsDeleting(true);
-		dispatch({ type: 'DELETE TASK', payload: id });
-		setIsDeleting(false);
-	};
+
+	useEffect(() => {
+		dispatch(getToDo());
+	}, []);
 	return (
 		<div>
 			<div className={styles.search}>
 				<label>Найти задачу</label>
 				<input
 					type="text"
-					onChange={(event) => searchDeal(event.target.value)}
-				/>{' '}
+					onChange={(event) => {
+						return searchDeal(event.target.value);
+					}}
+				/>
 			</div>
 			<button onClick={sortDeal}>Сортировка(А-Я)</button>
 
@@ -59,16 +67,16 @@ export const TasksList = () => {
 					<div key={id} className={styles.item}>
 						<p>-</p>
 						{isChanging.what && isChanging.id === id ? (
-							<form>
+							<div>
 								<input
 									className={styles.update}
 									type="text"
 									name={name}
-									onChange={(event) => handleUpdateChange(event, id)}
+									onChange={handleUpdateChange}
 									defaultValue={name}
 								/>
 								<button onClick={() => requestUpdateDeal(id)}>ОК</button>
-							</form>
+							</div>
 						) : (
 							<p className={styles.deal}>{name}</p>
 						)}
@@ -77,7 +85,6 @@ export const TasksList = () => {
 
 						<button
 							className={styles.delete}
-							disabled={isDeleting}
 							onClick={() => requestDeleteDeal(id)}
 						>
 							Удалить дело
